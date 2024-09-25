@@ -1,35 +1,30 @@
-const { AppoloServer, gql } = require("apollo-server-express");
+const { ApolloServer, gql } = require("apollo-server-express");
+const express = require("express");
+const { createServer } = require("http");
 
 const books = [
-  {
-    title: "吾輩は猫である",
-    author: "夏目漱石",
-  },
-  {
-    title: "走れメロス",
-    author: "太宰治",
-  },
+  // 既存のコード
 ];
 
 const typeDefs = gql`
-  type Book {
-    title: String,
-    author: String
-  }
-
-  typeQuery {
-    test: [book]
-  }
+  // 既存のコード
 `;
 
 const resolvers = {
-  Query: {
-    test: () => books,
-  },
+  // 既存のコード
 };
 
-const server = new AppoloServer({});
+async function startServer() {
+  const app = express();
+  const server = new ApolloServer({ typeDefs, resolvers });
 
-server.listen().then((url) => {
-  console.log(`Server ready at ${url}`);
-});
+  await server.start();
+  server.applyMiddleware({ app });
+
+  const httpServer = createServer(app);
+  httpServer.listen({ port: 4000 }, () => {
+    console.log(`Server ready at http://localhost:4000${server.graphqlPath}`);
+  });
+}
+
+startServer();
